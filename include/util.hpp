@@ -14,10 +14,17 @@
 #endif
 
 // debug helpers
+#ifndef err
+#define err(e) \
+    std::cerr << BRED << "[ERROR] " << e << GREY << std::endl; \
+    return 0;
+#endif
+
 #ifndef debug_err
 #define debug_err(e) \
     std::cerr << BRED << "[DEBUG] " << e << GREY << std::endl;
 #endif
+
 #ifndef debug_msg
 #define debug_msg(e) \
     std::cout << GREEN << "[DEBUG] " << e << GREY << std::endl;
