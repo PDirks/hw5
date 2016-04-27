@@ -22,7 +22,8 @@
 #include <stdlib.h>
 #include <string>
 #include <assert.h>
-#include <exception.h>
+//#include <exception.h>
+#include "exception.h"
 #include <math.h>
 
 #include <fstream>
@@ -31,8 +32,9 @@
 #include <algorithm>
 
 // includes, timer
-#include <stopwatch_functions.h>
-#include <string_helper.h>
+//#include <stopwatch_functions.h>
+#include "stopwatch_functions.h"
+#include "string_helper.h"
 
 #ifndef MIN
 #define MIN(a,b) ((a < b) ? a : b)
