@@ -39,22 +39,29 @@ int main(int argc, char *argv[]){
      */
     uint32_t width    = 0;
     uint32_t height   = 0;
-    uint8_t *image    = NULL;
-    if( sdkLoadPGM( input_file.c_str(), &image, &width, &height ) == false){
+    float *host_image = NULL;
+
+    // Load Image on host
+    if(sdkLoadPGM( input_file.c_str(), &host_image, &width, &height ) == false){
         err( "ERROR ON PPM LOAD" );
     }
+    float *output = NULL;
 
     /*
      * Push file data to device memory
      */
-    if(hw5_cuda::device_load( &image, &width, &height, &filter_size ) == false ){
+    if(hw5_cuda::device_load( &host_image, width, height, filter_size, &output ) == false){
         err( "ERROR ON LOAD TO DEVICE" );
     }
 
+    if(sdkSavePGM( output_file.c_str(), output, width, height ) == false){
+        err( "ERROR ON PPM LOAD" );
+    }
     /*
      * Cleanup
      */
-    free(image);
+    free(host_image);
+    free(output);
 
     return 0;
 }// end main
