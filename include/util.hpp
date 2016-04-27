@@ -6,6 +6,9 @@
  * April 26, 2016
  */
 
+#include <stdint.h> // uint
+#include <string>
+
 // testing helpers
 #ifndef assert
 #define assert(e) if((e) != true){ \
@@ -48,5 +51,5 @@
 #define BGREY   "\033[1;37m"
 #endif
 
-#flags
+// flags
 #define DEBUG               0
