@@ -26,9 +26,9 @@ int main(int argc, char *argv[]){
         err( "INSUFFICIENT PARAMETERS, format: [int filter size] [input file name] [output file name]" );
     }
 
-    const uint32_t filter_size      = atoi(argv[1]);
-    const std::string input_file    = argv[2];
-    const std::string output_file   = argv[3];
+    uint32_t filter_size      = atoi(argv[1]);
+    std::string input_file    = argv[2];
+    std::string output_file   = argv[3];
 
     if( filter_size <= 0 ){
         err( "FILTER SIZE NEEDS TO BE GREATER THAN 0" );
