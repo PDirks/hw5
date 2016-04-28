@@ -59,6 +59,15 @@ int main(int argc, char *argv[]){
      */
     copy_compute_time = filter.device_load( &host_image, width, height, filter_size, &output);
 
+    /*
+     * verify errors
+     */
+    double errors = filter.image_filter_error( &host_image, &output, width, height, filter_size );
+    if( errors < 0 ){
+        err( "ERROR ON CPU IMAGE CREATE" );
+    }
+
+
     if(sdkSavePGM( output_file.c_str(), output, width, height ) == false){
         err( "ERROR ON PPM LOAD" );
     }
@@ -69,6 +78,7 @@ int main(int argc, char *argv[]){
     double total_time = filter.getTime();
     std::cout << "Copy compute time: " << copy_compute_time << " ms" << std::endl;
     std::cout << "Total time: " << total_time << " ms" << std::endl;
+    std::cout << "Error percentage: " << errors << std::endl;
 
 
     /*

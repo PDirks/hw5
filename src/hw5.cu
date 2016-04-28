@@ -59,6 +59,7 @@ __global__ void median_filter(uint8_t *input, const uint32_t width, const uint32
 }// end median_filter
 
 double hw5_cuda::device_load(uint8_t **host_image, uint32_t width, uint32_t height, uint32_t filter_size, uint8_t** output){
+
     unsigned int size = width * height * sizeof(uint8_t);
 
     // Alloc device 
@@ -78,9 +79,79 @@ double hw5_cuda::device_load(uint8_t **host_image, uint32_t width, uint32_t heig
 
     cudaMemcpy(*output, device_image, size, cudaMemcpyDeviceToHost);
 
+
+
     return sdkGetTimerValue(&timer);
 
 }// end hw5_cuda::device_load
+
+void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t **gpu_image, uint32_t width, uint32_t height, uint32_t filter_size ){
+    uint32_t window_size = filter_size * filter_size;
+    int range = (filter_size)/ 2;
+
+    for (int y = 0; y < height; y++){
+        for (int x = 0; x < width; x++){
+            uint8_t neighborhood[window_size];
+            uint32_t neighborhood_index = 0;
+            // zero out neighborhood array
+            for (uint32_t k = 0; k < window_size; k++){
+                neighborhood[k] = 0;
+            }
+
+            // populate filter array
+            for(int current_x = x - range; current_x <= x + range; current_x++) {
+                for (int current_y = y - range; current_y <= y + range; current_y++) {
+                    if((x >= width - range) || (y >= height - range) || ((int)x - range) < 0 || ((int)y - range) < 0) {
+                        continue;
+                    }
+                    neighborhood[neighborhood_index] = host_image[(current_y * (int)width) + current_x];
+                    neighborhood_index++;
+                }// end inner populate
+            }// end outer populate
+
+
+            std::sort( neighborhood, neighborhood + window_size );
+            *gpu_image[x + width * y ] = neighborhood[range];
+
+        } // end col for
+    }// end row for
+
+}// end cpu_filter
+
+double hw5_cuda::image_filter_error( uint8_t **host_image, uint8_t **gpu_image, uint32_t width, uint32_t height, uint32_t filter_size ){
+    char cpu_file[] = "out_cpu.pgm";
+    uint32_t window_size = height * width;
+
+    /*
+     * create cpu_image
+     */
+    uint8_t *cpu_image = (uint8_t*)calloc( window_size, sizeof( uint8_t ) );
+    if( cpu_image == NULL ){
+        return -1;
+    }
+    cpu_filter( *host_image, &cpu_image, width, height, filter_size );
+
+    /*
+     * compare pixels for errors
+     */
+    uint32_t error_count = 0;
+    for( uint32_t i = 0; i < height * width; i++ ){
+        if( cpu_image[i] != *gpu_image[i] ){
+            error_count++;
+        }
+    }
+
+    /*
+     * save cpu image file
+     */
+    if(sdkSavePGM( cpu_file, cpu_image, width, height ) == false){
+        return -1;
+    }
+
+    //free(cpu_image);
+
+    return error_count / window_size;
+}// end image_filter_error
 
 void hw5_cuda::timerStart(){
     sdkCreateTimer(&timer);
