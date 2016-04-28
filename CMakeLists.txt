@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8)
 find_package(CUDA QUIET REQUIRED)
 
 #LIST(APPEND CMAKE_CXX_FLAGS "-std=c++0x -O3 -ffast-math -Wall")
-LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Werror -Wall")
 LIST(APPEND CUDA_NVCC_FLAGS --compiler-options -fno-strict-aliasing -lineinfo -use_fast_math -Xptxas -dlcm=cg)
 
 # not sure what this does, but it keeps the CXX flags from breaking everything
