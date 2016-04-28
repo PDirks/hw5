@@ -21,7 +21,7 @@ class hw5_cuda {
 public:
     StopWatchInterface *timer;
 
-    double device_load(float **image, uint32_t width, uint32_t height, uint32_t filter_size, float **output);
+    double device_load(uint8_t **image, uint32_t width, uint32_t height, uint32_t filter_size, uint8_t **output);
 
     void timerStart();
     void timerStop();

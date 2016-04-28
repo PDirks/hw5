@@ -40,13 +40,13 @@ int main(int argc, char *argv[]){
      */
     uint32_t width    = 0;
     uint32_t height   = 0;
-    float *host_image = NULL;
+    uint8_t *host_image = NULL;
 
     // Load Image on host
     if(sdkLoadPGM( input_file.c_str(), &host_image, &width, &height ) == false){
         err( "ERROR ON PPM LOAD" );
     }
-    float *output = NULL;
+    uint8_t *output = NULL;
 
     /*
      * start timer
