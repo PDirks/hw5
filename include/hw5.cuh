@@ -22,8 +22,8 @@ public:
     StopWatchInterface *timer;
 
     double device_load(uint8_t **image, uint32_t width, uint32_t height, uint32_t filter_size, uint8_t **output);
-    void cpu_filter( uint8_t *host_image, uint8_t **gpu_image, uint32_t width, uint32_t height, uint32_t filter_size );
-    double image_filter_error( uint8_t **host_image, uint8_t **gpu_image, uint32_t width, uint32_t height, uint32_t filter_size );
+    void cpu_filter( uint8_t *host_image, uint8_t *cpu_image, uint32_t width, uint32_t height, uint32_t filter_size );
+    double image_filter_error( uint8_t **host_image, uint8_t *gpu_image, uint32_t width, uint32_t height, uint32_t filter_size );
     void timerStart();
     void timerStop();
     double getTime();

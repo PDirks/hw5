@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
     /*
      * verify errors
      */
-    double errors = filter.image_filter_error( &host_image, &output, width, height, filter_size );
+    double errors = filter.image_filter_error( &host_image, output, width, height, filter_size );
     if( errors < 0 ){
         err( "ERROR ON CPU IMAGE CREATE" );
     }

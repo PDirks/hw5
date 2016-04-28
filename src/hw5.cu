@@ -85,7 +85,7 @@ double hw5_cuda::device_load(uint8_t **host_image, uint32_t width, uint32_t heig
 
 }// end hw5_cuda::device_load
 
-void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t **gpu_image, uint32_t width, uint32_t height, uint32_t filter_size ){
+void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t *cpu_image, uint32_t width, uint32_t height, uint32_t filter_size ){
     uint32_t window_size = filter_size * filter_size;
     int range = (filter_size)/ 2;
 
@@ -99,6 +99,7 @@ void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t **gpu_image, uint32_t wi
             }
 
             // populate filter array
+            //std::cout << "populate" << std::endl;
             for(int current_x = x - range; current_x <= x + range; current_x++) {
                 for (int current_y = y - range; current_y <= y + range; current_y++) {
                     if((x >= width - range) || (y >= height - range) || ((int)x - range) < 0 || ((int)y - range) < 0) {
@@ -106,19 +107,20 @@ void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t **gpu_image, uint32_t wi
                     }
                     neighborhood[neighborhood_index] = host_image[(current_y * (int)width) + current_x];
                     neighborhood_index++;
+                    //std::cout << "boop" << std::endl;
                 }// end inner populate
             }// end outer populate
 
-
+            //std::cout << "sorting" << std::endl;
             std::sort( neighborhood, neighborhood + window_size );
-            *gpu_image[x + width * y ] = neighborhood[range];
-
+            //std::cout << "sorting done" << std::endl;
+            cpu_image[x + width * y ] = neighborhood[range];
         } // end col for
     }// end row for
 
 }// end cpu_filter
 
-double hw5_cuda::image_filter_error( uint8_t **host_image, uint8_t **gpu_image, uint32_t width, uint32_t height, uint32_t filter_size ){
+double hw5_cuda::image_filter_error( uint8_t **host_image, uint8_t *gpu_image, uint32_t width, uint32_t height, uint32_t filter_size ){
     char cpu_file[] = "out_cpu.pgm";
     uint32_t window_size = height * width;
 
@@ -129,18 +131,16 @@ double hw5_cuda::image_filter_error( uint8_t **host_image, uint8_t **gpu_image, 
     if( cpu_image == NULL ){
         return -1;
     }
-    cpu_filter( *host_image, &cpu_image, width, height, filter_size );
-
+    cpu_filter( *host_image, cpu_image, width, height, filter_size );
     /*
      * compare pixels for errors
      */
     uint32_t error_count = 0;
-    for( uint32_t i = 0; i < height * width; i++ ){
-        if( cpu_image[i] != *gpu_image[i] ){
+    for( uint32_t i = 0; i < window_size; i++ ){
+        if( cpu_image[i] != gpu_image[i] ){
             error_count++;
         }
     }
-
     /*
      * save cpu image file
      */
@@ -150,7 +150,7 @@ double hw5_cuda::image_filter_error( uint8_t **host_image, uint8_t **gpu_image, 
 
     //free(cpu_image);
 
-    return error_count / window_size;
+    return (double) (error_count / window_size);
 }// end image_filter_error
 
 void hw5_cuda::timerStart(){
