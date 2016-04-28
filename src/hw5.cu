@@ -56,7 +56,8 @@ __global__ void median_filter(float *input, float* output, const uint32_t width,
 }// end median_filter
 
 
-bool hw5_cuda::device_load(float **host_image, uint32_t width, uint32_t height, uint32_t filter_size, float** output){
+//bool hw5_cuda::device_load(float **host_image, uint32_t width, uint32_t height, uint32_t filter_size, float** output){
+double hw5_cuda::device_load(float **host_image, uint32_t width, uint32_t height, uint32_t filter_size, float **output){
     unsigned int size = width * height * sizeof(float);
 
     // Alloc device 
@@ -81,6 +82,18 @@ bool hw5_cuda::device_load(float **host_image, uint32_t width, uint32_t height, 
 
     cudaMemcpy(*output, device_output_image, size, cudaMemcpyDeviceToHost);
 
-    return true;
+    return sdkGetTimerValue(&timer);
 
 }// end hw5_cuda::device_load
+
+void hw5_cuda::timerStart(){
+    sdkCreateTimer(&timer);
+    sdkStartTimer(&timer);
+}
+void hw5_cuda::timerStop(){
+    sdkStopTimer(&timer);
+    sdkDeleteTimer(&timer);
+}
+double hw5_cuda::getTime(){
+    return sdkGetTimerValue(&timer);
+}

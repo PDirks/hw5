@@ -18,6 +18,7 @@
  *      ./hw5 3 ../data/lena.ppm ../out.ppm
  */
 int main(int argc, char *argv[]){
+    hw5_cuda filter;
 
     /*
      * Check input parameters
@@ -48,15 +49,33 @@ int main(int argc, char *argv[]){
     float *output = NULL;
 
     /*
-     * Push file data to device memory
+     * start timer
      */
-    if(hw5_cuda::device_load( &host_image, width, height, filter_size, &output ) == false){
-        err( "ERROR ON LOAD TO DEVICE" );
-    }
+    filter.timerStart();
+    double copy_compute_time = 0;
+
+    /*
+     * Push file data to device memory & run filter
+     */
+    copy_compute_time = filter.device_load( &host_image, width, height, filter_size, &output);
 
     if(sdkSavePGM( output_file.c_str(), output, width, height ) == false){
         err( "ERROR ON PPM LOAD" );
     }
+
+    /*
+     * Print
+     */
+    double total_time = filter.getTime();
+    std::cout << "Copy compute time: " << copy_compute_time << " ms" << std::endl;
+    std::cout << "Total time: " << total_time << " ms" << std::endl;
+
+
+    /*
+     * stop timer
+     */
+    filter.timerStop();
+
     /*
      * Cleanup
      */
