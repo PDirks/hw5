@@ -99,7 +99,6 @@ void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t *cpu_image, uint32_t wid
             }
 
             // populate filter array
-            //std::cout << "populate" << std::endl;
             for(int current_x = x - range; current_x <= x + range; current_x++) {
                 for (int current_y = y - range; current_y <= y + range; current_y++) {
                     if((x >= width - range) || (y >= height - range) || ((int)x - range) < 0 || ((int)y - range) < 0) {
@@ -107,13 +106,10 @@ void hw5_cuda::cpu_filter( uint8_t *host_image, uint8_t *cpu_image, uint32_t wid
                     }
                     neighborhood[neighborhood_index] = host_image[(current_y * (int)width) + current_x];
                     neighborhood_index++;
-                    //std::cout << "boop" << std::endl;
                 }// end inner populate
             }// end outer populate
 
-            //std::cout << "sorting" << std::endl;
             std::sort( neighborhood, neighborhood + window_size );
-            //std::cout << "sorting done" << std::endl;
             cpu_image[x + width * y ] = neighborhood[range];
         } // end col for
     }// end row for
@@ -148,7 +144,7 @@ double hw5_cuda::image_filter_error( uint8_t **host_image, uint8_t *gpu_image, u
         return -1;
     }
 
-    //free(cpu_image);
+    free(cpu_image);
 
     return (double) (error_count / window_size);
 }// end image_filter_error
